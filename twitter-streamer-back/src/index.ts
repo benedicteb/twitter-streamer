@@ -1,5 +1,22 @@
 import express from "express";
 import Twitter from "twitter";
+import { Table, Column, Model } from "sequelize-typescript";
+import { Sequelize } from "sequelize-typescript";
+
+@Table
+class Tweet extends Model<Tweet> {
+  @Column
+  text!: string;
+}
+
+const sequelize = new Sequelize({
+  database: "some_db",
+  dialect: "sqlite",
+  username: "root",
+  password: "",
+  storage: ":memory:",
+  models: [Tweet]
+});
 
 const TWITTER_CONSUMER_KEY = process.env["TWITTER_CONSUMER_KEY"];
 const TWITTER_CONSUMER_SECRET = process.env["TWITTER_CONSUMER_SECRET"];
@@ -23,21 +40,29 @@ const twitterClient = new Twitter({
   access_token_secret: TWITTER_ACCESS_TOKEN_SECRET
 });
 
-twitterClient.stream("statuses/filter", { track: "javascript" }, stream => {
-  stream.on("data", function(event) {
-    console.log(event.text);
-  });
-
-  stream.on("error", function(error) {
-    throw error;
-  });
-});
-
 const app = express();
 const port = 3000;
 
 app.get("/", (req, res) => res.send("Hello World!"));
 
-app.listen(port, () =>
-  console.log(`Example app listening at http://localhost:${port}`)
-);
+const init = async () => {
+  await sequelize.sync();
+
+  twitterClient.stream("statuses/filter", { track: "javascript" }, stream => {
+    stream.on("data", function(event) {
+      const newTweet = Tweet.build({ text: event.text });
+
+      newTweet.save();
+    });
+
+    stream.on("error", function(error) {
+      throw error;
+    });
+  });
+
+  app.listen(port, () =>
+    console.log(`Example app listening at http://localhost:${port}`)
+  );
+};
+
+init();
