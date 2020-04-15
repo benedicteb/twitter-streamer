@@ -53,7 +53,7 @@ footer {
 .tweet-list {
   list-style: none;
 
-  margin: 10px;
+  margin: 10px 0 10px 0;
   padding: 0;
 
   overflow-x: hidden;
@@ -70,9 +70,11 @@ footer {
   justify-content: flex-start;
   align-items: flex-start;
 
-  margin: 10px;
-  border-radius: 10px;
+  margin: 10px 0 10px 10px;
   padding: 10px;
+
+  border-radius: 10px 0 0 10px;
+
   box-shadow: 1px 1px 10px 0px #0000008c;
 
   background-color: #ffffffc7;
@@ -110,6 +112,7 @@ footer {
 
   animation-duration: 1s;
   animation-name: slidein;
+  animation-timing-function: cubic-bezier(0.42, 0, 0, 1.01);
 }
 
 @keyframes slidein {
