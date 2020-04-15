@@ -8,7 +8,11 @@ const Layout: FC = ({ children }) => (
       </h1>
 
       <nav>
-        <a href={"/"} target={"_blank"} rel={"noopener noreferrer"}>
+        <a
+          href={"https://github.com/benedicteb/twitter-streamer"}
+          target={"_blank"}
+          rel={"noopener noreferrer"}
+        >
           Code
         </a>
       </nav>
