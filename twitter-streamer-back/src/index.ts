@@ -8,6 +8,7 @@ import {
   Table
 } from "sequelize-typescript";
 import { v4 as uuidv4 } from "uuid";
+import cors from "cors";
 
 @Table
 class Tweet extends Model<Tweet> {
@@ -70,6 +71,8 @@ const twitterClient = new Twitter({
 const app = express();
 const port = 3000;
 let openConnections: { [key: string]: express.Response } = {};
+
+app.use(cors({ origin: "http://localhost:3001" }));
 
 app.get("/health", (req, res) => {
   res.send("ok");
