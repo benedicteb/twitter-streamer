@@ -57,9 +57,12 @@ app.get("/tweets/subscribe", (req, res) => {
     "Cache-Control": "no-cache"
   });
 
-  // Send start of stream (the 10 newest tweets?)
-  // const data = `data: ${JSON.stringify(nests)}\n\n`;
-  // res.write(data);
+  // Send start of stream (the x last tweets)
+  Tweet.findAll({ order: [["createdAt", "DESC"]], limit: 3 }).then(tweets => {
+    tweets.reverse().forEach(tweet => {
+      res.write(`${JSON.stringify(tweet.toJSON())}\n\n`);
+    });
+  });
 
   const clientId = uuidv4();
 
@@ -68,12 +71,17 @@ app.get("/tweets/subscribe", (req, res) => {
 
   openConnections[clientId] = res;
 
+  // On request close remove the client row from the db
   req.on("close", () => {
     Client.destroy({ where: { clientId } });
   });
 });
 
 const sendTweetToClient = async (tweet: Tweet): Promise<Client[]> => {
+  /*
+   * Loop through all client rows in the db, find the open connection
+   * and write to it.
+   */
   return Client.findAll().then(clients => {
     clients.forEach(client => {
       openConnections[client.clientId].write(
@@ -104,6 +112,8 @@ const init = async () => {
   app.listen(port, () =>
     console.log(`Example app listening at http://localhost:${port}`)
   );
+
+  // TODO Add pruning of the openConnections array
 };
 
 init();
