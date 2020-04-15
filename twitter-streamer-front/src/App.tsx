@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import Layout from "./components/Layout";
 
 function App() {
   const initialTweets: Tweet[] = [];
@@ -14,7 +15,7 @@ function App() {
       const myEvent = event as ServerSentEvent;
       const tweet = JSON.parse(myEvent.data) as Tweet;
 
-      const updated = [tweet, ...ref.current];
+      const updated = [tweet, ...ref.current].slice(0, 5);
       ref.current = updated;
       setTweets(updated);
     });
@@ -26,17 +27,34 @@ function App() {
   }, []);
 
   return (
-    <div className="App">
-      <h1>Tweets</h1>
+    <Layout>
+      <section>
+        <ul className={"tweet-list"}>
+          {tweets.map(tweet => (
+            <li className={"tweet-list--entry"} key={tweet.id}>
+              <img
+                className={"tweet-list--entry--image"}
+                src={tweet.profilePictureUrl}
+                alt={""}
+              />
 
-      <ul>
-        {tweets.map(tweet => (
-          <li key={tweet.text}>
-            {tweet.createdAt} - {tweet.text}
-          </li>
-        ))}
-      </ul>
-    </div>
+              <div className={"tweet-list--entry--main"}>
+                <div className={"tweet-list--entry--header"}>
+                  <p className={"tweet-list--entry--username"}>
+                    {tweet.authorUsername}
+                  </p>
+                  <p className={"tweet-list--entry--created"}>
+                    {tweet.createdAt}
+                  </p>
+                </div>
+
+                <p className={"tweet-list--entry--text"}>{tweet.text}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </section>
+    </Layout>
   );
 }
 

@@ -3,6 +3,7 @@ interface Tweet {
   createdAt: string;
   profilePictureUrl: string;
   authorUsername: string;
+  id: number;
 }
 
 interface ServerSentEvent {
