@@ -1,0 +1,39 @@
+version: '2.1'
+
+services:
+
+  backend:
+    build: twitter-streamer-back/
+    ports:
+      - "3000:3000"
+    environment:
+      - TWITTER_CONSUMER_KEY=${TWITTER_CONSUMER_KEY}
+      - TWITTER_CONSUMER_SECRET=${TWITTER_CONSUMER_SECRET}
+      - TWITTER_ACCESS_TOKEN_KEY=${TWITTER_ACCESS_TOKEN_KEY}
+      - TWITTER_ACCESS_TOKEN_SECRET=${TWITTER_ACCESS_TOKEN_SECRET}
+      - POSTGRES_HOST=postgres
+      - POSTGRES_DBNAME=twitter_streamer_db
+      - POSTGRES_USERNAME=dbuser
+      - POSTGRES_PASSWORD=abc123
+    links:
+      - postgres
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:11
+    command: postgres -c 'log_statement=all'
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=twitter_streamer_db
+      - POSTGRES_USER=dbuser
+      - POSTGRES_PASSWORD=abc123
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h localhost -p 5432 -U dbuser -d twitter_streamer_db"]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+
