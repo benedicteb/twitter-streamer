@@ -55,6 +55,8 @@ footer {
 
   margin: 10px;
   padding: 0;
+
+  overflow-x: hidden;
 }
 
 .tweet-list p {
@@ -101,4 +103,23 @@ footer {
 .tweet-list--entry--header {
   display: flex;
   justify-content: space-between;
+}
+
+.tweet-list--entry {
+  position: relative;
+
+  animation-duration: 1s;
+  animation-name: slidein;
+}
+
+@keyframes slidein {
+  from {
+    left: 100%;
+    opacity: 0.2;
+  }
+
+  to {
+    left: 0%;
+    opacity: 1;
+  }
 }
