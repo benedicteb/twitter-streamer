@@ -114,6 +114,11 @@ const sendTweetToClient = async (tweet: Tweet): Promise<Client[]> => {
    */
   return Client.findAll().then(clients => {
     clients.forEach(client => {
+      if (openConnections[client.clientId] === undefined) {
+        // Connection destroyed for client in db, removing db row
+        Client.destroy({ where: { clientId: client.clientId } });
+      }
+
       openConnections[client.clientId].write(
         `id: tweet-${tweet.id}\nevent: newTweet\ndata: ${JSON.stringify(
           tweet.toJSON()
