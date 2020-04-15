@@ -23,7 +23,6 @@ const twitterClient = new Twitter({
   access_token_secret: TWITTER_ACCESS_TOKEN_SECRET
 });
 
-// You can also get the stream in a callback if you prefer.
 twitterClient.stream("statuses/filter", { track: "javascript" }, stream => {
   stream.on("data", function(event) {
     console.log(event.text);
