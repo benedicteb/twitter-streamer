@@ -14,6 +14,12 @@ import cors from "cors";
 class Tweet extends Model<Tweet> {
   @Column(DataType.TEXT)
   text!: string;
+
+  @Column(DataType.TEXT)
+  authorUsername!: string;
+
+  @Column(DataType.TEXT)
+  profilePictureUrl!: string;
 }
 
 @Table
@@ -153,8 +159,12 @@ const init = async () => {
     "statuses/filter",
     { track: TWITTER_SEARCH_TERM },
     stream => {
-      stream.on("data", function(event) {
-        Tweet.build({ text: event.text })
+      stream.on("data", event => {
+        Tweet.build({
+          text: event.text,
+          authorUsername: event.user.name,
+          profilePictureUrl: event.user.profile_image_url
+        })
           .save()
           .then(savedTweet => {
             sendTweetToClient(savedTweet);
