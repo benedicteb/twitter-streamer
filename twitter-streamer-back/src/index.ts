@@ -22,6 +22,8 @@ class Client extends Model<Client> {
   clientId!: string;
 }
 
+const TWITTER_SEARCH_TERM = "javascript";
+
 const POSTGRES_HOST = process.env["POSTGRES_HOST"];
 const POSTGRES_DBNAME = process.env["POSTGRES_DBNAME"];
 const POSTGRES_USERNAME = process.env["POSTGRES_USERNAME"];
@@ -147,19 +149,23 @@ const pruneOpenConnections = () => {
 const init = async () => {
   await sequelize.sync();
 
-  twitterClient.stream("statuses/filter", { track: "javascript" }, stream => {
-    stream.on("data", function(event) {
-      Tweet.build({ text: event.text })
-        .save()
-        .then(savedTweet => {
-          sendTweetToClient(savedTweet);
-        });
-    });
+  twitterClient.stream(
+    "statuses/filter",
+    { track: TWITTER_SEARCH_TERM },
+    stream => {
+      stream.on("data", function(event) {
+        Tweet.build({ text: event.text })
+          .save()
+          .then(savedTweet => {
+            sendTweetToClient(savedTweet);
+          });
+      });
 
-    stream.on("error", function(error) {
-      throw error;
-    });
-  });
+      stream.on("error", function(error) {
+        throw error;
+      });
+    }
+  );
 
   app.listen(port, () => console.log(`Listening at http://localhost:${port}`));
 
