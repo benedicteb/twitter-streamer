@@ -15,19 +15,25 @@ class Client extends Model<Client> {
   clientId!: string;
 }
 
-const sequelize = new Sequelize({
-  database: "some_db",
-  dialect: "sqlite",
-  username: "root",
-  password: "",
-  storage: ":memory:",
-  models: [Tweet, Client]
-});
+const POSTGRES_HOST = process.env["POSTGRES_HOST"];
+const POSTGRES_DBNAME = process.env["POSTGRES_DBNAME"];
+const POSTGRES_USERNAME = process.env["POSTGRES_USERNAME"];
+const POSTGRES_PASSWORD = process.env["POSTGRES_PASSWORD"];
 
 const TWITTER_CONSUMER_KEY = process.env["TWITTER_CONSUMER_KEY"];
 const TWITTER_CONSUMER_SECRET = process.env["TWITTER_CONSUMER_SECRET"];
 const TWITTER_ACCESS_TOKEN_KEY = process.env["TWITTER_ACCESS_TOKEN_KEY"];
 const TWITTER_ACCESS_TOKEN_SECRET = process.env["TWITTER_ACCESS_TOKEN_SECRET"];
+
+if (POSTGRES_HOST === undefined) {
+  throw Error("Missing POSTGRES_HOST");
+} else if (POSTGRES_DBNAME === undefined) {
+  throw Error("Missing POSTGRES_DBNAME");
+} else if (POSTGRES_USERNAME === undefined) {
+  throw Error("Missing POSTGRES_USERNAME");
+} else if (POSTGRES_PASSWORD === undefined) {
+  throw Error("Missing POSTGRES_PASSWORD");
+}
 
 if (TWITTER_CONSUMER_KEY === undefined) {
   throw Error("Missing TWITTER_CONSUMER_KEY");
@@ -38,6 +44,15 @@ if (TWITTER_CONSUMER_KEY === undefined) {
 } else if (TWITTER_ACCESS_TOKEN_SECRET === undefined) {
   throw Error("Missing TWITTER_ACCESS_TOKEN_SECRET");
 }
+
+const sequelize = new Sequelize({
+  host: POSTGRES_HOST,
+  database: POSTGRES_DBNAME,
+  dialect: "postgres",
+  username: POSTGRES_USERNAME,
+  password: POSTGRES_PASSWORD,
+  models: [Tweet, Client]
+});
 
 const twitterClient = new Twitter({
   consumer_key: TWITTER_CONSUMER_KEY,
