@@ -85,7 +85,7 @@ app.get("/tweets/subscribe", (req, res) => {
   // Send start of stream (the x last tweets)
   Tweet.findAll({ order: [["createdAt", "DESC"]], limit: 3 }).then(tweets => {
     tweets.reverse().forEach(tweet => {
-      res.write(`${JSON.stringify(tweet.toJSON())}\n\n`);
+      res.write(`data: ${JSON.stringify(tweet.toJSON())}\n\n`);
     });
   });
 
@@ -110,7 +110,7 @@ const sendTweetToClient = async (tweet: Tweet): Promise<Client[]> => {
   return Client.findAll().then(clients => {
     clients.forEach(client => {
       openConnections[client.clientId].write(
-        `${JSON.stringify(tweet.toJSON())}\n\n`
+        `data: ${JSON.stringify(tweet.toJSON())}\n\n`
       );
     });
 
