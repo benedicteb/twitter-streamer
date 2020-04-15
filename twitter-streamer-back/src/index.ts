@@ -71,6 +71,10 @@ const app = express();
 const port = 3000;
 let openConnections: { [key: string]: express.Response } = {};
 
+app.get("/health", (req, res) => {
+  res.send("ok");
+});
+
 app.get("/tweets/subscribe", (req, res) => {
   res.writeHead(200, {
     "Content-Type": "text/event-stream",
