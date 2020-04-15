@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import Layout from "./components/Layout";
 
+const MAX_TWEETS_TO_LIST = 10;
+
 function App() {
   const initialTweets: Tweet[] = [];
   const ref = useRef(initialTweets);
@@ -15,7 +17,7 @@ function App() {
       const myEvent = event as ServerSentEvent;
       const tweet = JSON.parse(myEvent.data) as Tweet;
 
-      const updated = [tweet, ...ref.current].slice(0, 5);
+      const updated = [tweet, ...ref.current].slice(0, MAX_TWEETS_TO_LIST);
       ref.current = updated;
       setTweets(updated);
     });
