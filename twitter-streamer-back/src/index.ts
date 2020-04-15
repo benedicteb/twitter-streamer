@@ -1,17 +1,23 @@
 import express from "express";
 import Twitter from "twitter";
-import { Column, Model, Sequelize, Table } from "sequelize-typescript";
+import {
+  Column,
+  DataType,
+  Model,
+  Sequelize,
+  Table
+} from "sequelize-typescript";
 import { v4 as uuidv4 } from "uuid";
 
 @Table
 class Tweet extends Model<Tweet> {
-  @Column
+  @Column(DataType.TEXT)
   text!: string;
 }
 
 @Table
 class Client extends Model<Client> {
-  @Column
+  @Column(DataType.TEXT)
   clientId!: string;
 }
 
