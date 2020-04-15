@@ -149,10 +149,11 @@ const init = async () => {
 
   twitterClient.stream("statuses/filter", { track: "javascript" }, stream => {
     stream.on("data", function(event) {
-      const newTweet = Tweet.build({ text: event.text });
-
-      newTweet.save();
-      sendTweetToClient(newTweet);
+      Tweet.build({ text: event.text })
+        .save()
+        .then(savedTweet => {
+          sendTweetToClient(savedTweet);
+        });
     });
 
     stream.on("error", function(error) {
