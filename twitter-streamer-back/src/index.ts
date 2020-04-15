@@ -1,12 +1,18 @@
 import express from "express";
 import Twitter from "twitter";
-import { Table, Column, Model } from "sequelize-typescript";
-import { Sequelize } from "sequelize-typescript";
+import { Column, Model, Sequelize, Table } from "sequelize-typescript";
+import { v4 as uuidv4 } from "uuid";
 
 @Table
 class Tweet extends Model<Tweet> {
   @Column
   text!: string;
+}
+
+@Table
+class Client extends Model<Client> {
+  @Column
+  clientId!: string;
 }
 
 const sequelize = new Sequelize({
@@ -15,7 +21,7 @@ const sequelize = new Sequelize({
   username: "root",
   password: "",
   storage: ":memory:",
-  models: [Tweet]
+  models: [Tweet, Client]
 });
 
 const TWITTER_CONSUMER_KEY = process.env["TWITTER_CONSUMER_KEY"];
@@ -42,8 +48,42 @@ const twitterClient = new Twitter({
 
 const app = express();
 const port = 3000;
+let openConnections: { [key: string]: express.Response } = {};
 
-app.get("/", (req, res) => res.send("Hello World!"));
+app.get("/tweets/subscribe", (req, res) => {
+  res.writeHead(200, {
+    "Content-Type": "text/event-stream",
+    Connection: "keep-alive",
+    "Cache-Control": "no-cache"
+  });
+
+  // Send start of stream (the 10 newest tweets?)
+  // const data = `data: ${JSON.stringify(nests)}\n\n`;
+  // res.write(data);
+
+  const clientId = uuidv4();
+
+  const newClient = Client.build({ clientId });
+  newClient.save();
+
+  openConnections[clientId] = res;
+
+  req.on("close", () => {
+    Client.destroy({ where: { clientId } });
+  });
+});
+
+const sendTweetToClient = async (tweet: Tweet): Promise<Client[]> => {
+  return Client.findAll().then(clients => {
+    clients.forEach(client => {
+      openConnections[client.clientId].write(
+        `${JSON.stringify(tweet.toJSON())}\n\n`
+      );
+    });
+
+    return clients;
+  });
+};
 
 const init = async () => {
   await sequelize.sync();
@@ -53,6 +93,7 @@ const init = async () => {
       const newTweet = Tweet.build({ text: event.text });
 
       newTweet.save();
+      sendTweetToClient(newTweet);
     });
 
     stream.on("error", function(error) {

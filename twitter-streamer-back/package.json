@@ -15,13 +15,15 @@
     "@types/node": "^13.11.1",
     "@types/sequelize": "^4.28.8",
     "@types/twitter": "^1.7.0",
+    "@types/uuid": "^7.0.2",
     "@types/validator": "^13.0.0",
     "express": "^4.17.1",
     "reflect-metadata": "^0.1.13",
     "sequelize": "^5.21.6",
     "sequelize-typescript": "^1.1.0",
     "twitter": "^1.7.1",
-    "typescript": "^3.8.3"
+    "typescript": "^3.8.3",
+    "uuid": "^7.0.3"
   },
   "devDependencies": {
     "sqlite3": "^4.1.1",
