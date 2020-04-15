@@ -93,6 +93,20 @@ const sendTweetToClient = async (tweet: Tweet): Promise<Client[]> => {
   });
 };
 
+const pruneOpenConnections = () => {
+  Object.keys(openConnections).forEach(clientId => {
+    Client.findOne({ where: { clientId } }).then(client => {
+      if (!client) {
+        // Client has been removed from the db - remove the connection from the in-memory array
+        console.log(`Removing connection ${clientId} from array`);
+        delete openConnections[clientId];
+      }
+    });
+  });
+
+  setTimeout(pruneOpenConnections, 1000);
+};
+
 const init = async () => {
   await sequelize.sync();
 
@@ -109,11 +123,9 @@ const init = async () => {
     });
   });
 
-  app.listen(port, () =>
-    console.log(`Example app listening at http://localhost:${port}`)
-  );
+  app.listen(port, () => console.log(`Listening at http://localhost:${port}`));
 
-  // TODO Add pruning of the openConnections array
+  pruneOpenConnections();
 };
 
 init();
