@@ -17,7 +17,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build:config": "tsnode scripts/buildConfig.ts",
+    "build:config": "node_modules/.bin/ts-node src/buildConfig.ts",
     "build": "npm run build:config && react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -36,5 +36,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "ts-node": "^8.8.2"
   }
 }
