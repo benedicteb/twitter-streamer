@@ -157,7 +157,7 @@ const init = async () => {
         Tweet.build({
           text: event.text,
           authorUsername: event.user.name,
-          profilePictureUrl: event.user.profile_image_url
+          profilePictureUrl: event.user.profile_image_url_https
         })
           .save()
           .then(savedTweet => {
