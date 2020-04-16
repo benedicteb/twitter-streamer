@@ -38,3 +38,16 @@ services:
       timeout: 10s
       retries: 10
 
+  frontend:
+    build:
+      context: twitter-streamer-front/
+      args:
+        - BACKEND_HOST=http://localhost:3000
+        - MAX_TWEETS_TO_LIST=10
+    ports:
+      - "80:80"
+    restart: always
+    depends_on:
+      backend:
+        condition: service_healthy
+
