@@ -1,0 +1,9 @@
+setup:
+  addons:
+    - plan: heroku-postgresql
+      as: DATABASE
+  config:
+    CORS_ALLOWED_ORIGIN: https://damp-beach-95259.herokuapp.com/
+build:
+  docker:
+    web: twitter-streamer-back/Dockerfile

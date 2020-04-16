@@ -30,10 +30,8 @@ class Client extends Model<Client> {
 
 const TWITTER_SEARCH_TERM = "javascript";
 
-const POSTGRES_HOST = process.env["POSTGRES_HOST"];
-const POSTGRES_DBNAME = process.env["POSTGRES_DBNAME"];
-const POSTGRES_USERNAME = process.env["POSTGRES_USERNAME"];
-const POSTGRES_PASSWORD = process.env["POSTGRES_PASSWORD"];
+const DATABASE_URL = process.env["DATABASE_URL"];
+const PORT = process.env["PORT"];
 
 const TWITTER_CONSUMER_KEY = process.env["TWITTER_CONSUMER_KEY"];
 const TWITTER_CONSUMER_SECRET = process.env["TWITTER_CONSUMER_SECRET"];
@@ -43,14 +41,12 @@ const TWITTER_ACCESS_TOKEN_SECRET = process.env["TWITTER_ACCESS_TOKEN_SECRET"];
 const CORS_ALLOWED_ORIGIN =
   process.env["CORS_ALLOWED_ORIGIN"] || "http://localhost:3001";
 
-if (POSTGRES_HOST === undefined) {
-  throw Error("Missing POSTGRES_HOST");
-} else if (POSTGRES_DBNAME === undefined) {
-  throw Error("Missing POSTGRES_DBNAME");
-} else if (POSTGRES_USERNAME === undefined) {
-  throw Error("Missing POSTGRES_USERNAME");
-} else if (POSTGRES_PASSWORD === undefined) {
-  throw Error("Missing POSTGRES_PASSWORD");
+if (DATABASE_URL === undefined) {
+  throw Error("Missing DATABASE_URL");
+}
+
+if (PORT === undefined) {
+  throw Error("Missing PORT");
 }
 
 if (TWITTER_CONSUMER_KEY === undefined) {
@@ -63,12 +59,8 @@ if (TWITTER_CONSUMER_KEY === undefined) {
   throw Error("Missing TWITTER_ACCESS_TOKEN_SECRET");
 }
 
-const sequelize = new Sequelize({
-  host: POSTGRES_HOST,
-  database: POSTGRES_DBNAME,
+const sequelize = new Sequelize(DATABASE_URL, {
   dialect: "postgres",
-  username: POSTGRES_USERNAME,
-  password: POSTGRES_PASSWORD,
   models: [Tweet, Client]
 });
 
@@ -80,7 +72,6 @@ const twitterClient = new Twitter({
 });
 
 const app = express();
-const port = 3000;
 let openConnections: { [key: string]: express.Response } = {};
 
 app.use(cors({ origin: CORS_ALLOWED_ORIGIN }));
@@ -180,7 +171,7 @@ const init = async () => {
     }
   );
 
-  app.listen(port, () => console.log(`Listening at http://localhost:${port}`));
+  app.listen(PORT, () => console.log(`Listening at http://localhost:${PORT}`));
 
   pruneOpenConnections();
 };

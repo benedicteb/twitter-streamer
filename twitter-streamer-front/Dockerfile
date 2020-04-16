@@ -14,7 +14,7 @@ RUN npm run build
 # Stage 2 - run
 FROM nginx:1.17-alpine
 COPY --from=build-dependencies /usr/src/app/build /usr/share/nginx/html
-RUN apk update && apk add curl
+RUN apt update && apt install -y curl
 
 MAINTAINER Benedicte Emilie Brækken <b@brkn.io>
 
