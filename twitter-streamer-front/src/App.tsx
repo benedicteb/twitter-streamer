@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import Layout from "./components/Layout";
-
-const MAX_TWEETS_TO_LIST = 10;
+import config from "./config.json";
 
 function App() {
   const initialTweets: Tweet[] = [];
@@ -10,14 +9,14 @@ function App() {
 
   useEffect(() => {
     const eventSource = new EventSource(
-      "http://localhost:3000/tweets/subscribe"
+      `${config.backendHost}/tweets/subscribe`
     );
 
     eventSource.addEventListener("newTweet", (event: any) => {
       const myEvent = event as ServerSentEvent;
       const tweet = JSON.parse(myEvent.data) as Tweet;
 
-      const updated = [tweet, ...ref.current].slice(0, MAX_TWEETS_TO_LIST);
+      const updated = [tweet, ...ref.current].slice(0, config.maxTweetsToList);
       ref.current = updated;
       setTweets(updated);
     });
