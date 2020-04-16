@@ -4,14 +4,15 @@ MAINTAINER Benedicte Emilie Brækken <b@brkn.io>
 
 RUN apk update && apk add curl
 
-COPY src /usr/src/app/src
+WORKDIR /usr/src/app
+
 COPY package.json /usr/src/app/
 COPY package-lock.json /usr/src/app/
 COPY tsconfig.json /usr/src/app/
 
 RUN cd /usr/src/app && npm install
 
-WORKDIR /usr/src/app
+COPY src /usr/src/app/src
 
 HEALTHCHECK --interval=5s --timeout=3s \
     CMD curl -f http://localhost:3000/health || exit 1
