@@ -15,6 +15,7 @@ services:
       - POSTGRES_DBNAME=twitter_streamer_db
       - POSTGRES_USERNAME=dbuser
       - POSTGRES_PASSWORD=abc123
+      - CORS_ALLOWED_ORIGIN=http://localhost
     links:
       - postgres
     restart: always

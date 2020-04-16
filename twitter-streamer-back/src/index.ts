@@ -40,6 +40,9 @@ const TWITTER_CONSUMER_SECRET = process.env["TWITTER_CONSUMER_SECRET"];
 const TWITTER_ACCESS_TOKEN_KEY = process.env["TWITTER_ACCESS_TOKEN_KEY"];
 const TWITTER_ACCESS_TOKEN_SECRET = process.env["TWITTER_ACCESS_TOKEN_SECRET"];
 
+const CORS_ALLOWED_ORIGIN =
+  process.env["CORS_ALLOWED_ORIGIN"] || "http://localhost:3001";
+
 if (POSTGRES_HOST === undefined) {
   throw Error("Missing POSTGRES_HOST");
 } else if (POSTGRES_DBNAME === undefined) {
@@ -80,7 +83,7 @@ const app = express();
 const port = 3000;
 let openConnections: { [key: string]: express.Response } = {};
 
-app.use(cors({ origin: "http://localhost:3001" }));
+app.use(cors({ origin: CORS_ALLOWED_ORIGIN }));
 
 app.get("/health", (req, res) => {
   res.send("ok");
