@@ -152,7 +152,7 @@ const pruneOpenConnections = () => {
     });
   });
 
-  setTimeout(pruneOpenConnections, 1000);
+  setTimeout(pruneOpenConnections, 10 * 1000);
 };
 
 const init = async () => {
