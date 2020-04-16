@@ -15,8 +15,6 @@ RUN cd /usr/src/app && npm install
 COPY src /usr/src/app/src
 
 HEALTHCHECK --interval=5s --timeout=3s \
-    CMD curl -f http://localhost:3000/health || exit 1
-
-EXPOSE 3000
+    CMD curl -f http://localhost:$PORT/health || exit 1
 
 CMD [ "npm", "start" ]

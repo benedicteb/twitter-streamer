@@ -11,11 +11,9 @@ services:
       - TWITTER_CONSUMER_SECRET=${TWITTER_CONSUMER_SECRET}
       - TWITTER_ACCESS_TOKEN_KEY=${TWITTER_ACCESS_TOKEN_KEY}
       - TWITTER_ACCESS_TOKEN_SECRET=${TWITTER_ACCESS_TOKEN_SECRET}
-      - POSTGRES_HOST=postgres
-      - POSTGRES_DBNAME=twitter_streamer_db
-      - POSTGRES_USERNAME=dbuser
-      - POSTGRES_PASSWORD=abc123
+      - DATABASE_URL=postgres://dbuser:abc123@postgres:5432/twitter_streamer_db
       - CORS_ALLOWED_ORIGIN=http://localhost
+      - PORT=3000
     links:
       - postgres
     restart: always
